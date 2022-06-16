@@ -6,7 +6,12 @@ import pinia  from "./store";
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+// 引用icon
+import './assets/icons/iconfont.js'
+import SvgIcon from '@/components/SvgIcon/SvgIcon.vue'
 const app = createApp(App)
+
+app.component('svg-icon',SvgIcon)
 app.use(router)
 app.use(ElementPlus)
 app.use(pinia)

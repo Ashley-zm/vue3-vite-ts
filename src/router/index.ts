@@ -1,23 +1,30 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
 // 定义路由组件.
-import User from '@/view/user/UserLogin.vue'
-import TheHome from '@/view/user/TheHome.vue'
+import UserLogin from '@/view/home/UserLogin.vue'
+import TheHome from '@/view/home/TheHome.vue'
+import TheMap from '@/view/map/TheMap.vue'
 
 // 定义路由
 const routes = [
   {
     path: "/",
     name:'login',
-    // redirect: '/login',
-    component:User,
-    // component: () => import("@/view/user/UserLogin.vue"),
+    component:UserLogin,
   },
    {
     path: "/home",
-    name:'home',
     component:TheHome,
+    redirect:'/TheMap',
+    children:[
+      {
+        path: "/TheMap",
+        name:'一张图',
+        component:TheMap,
+      },
+    ]
   },
+  
 ];
 
 // 创建路由实例并传递 `routes` 配置
