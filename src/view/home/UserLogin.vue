@@ -5,7 +5,7 @@
         <el-main>
           <div class="title">
             <div class="logo">
-            <img src="/images/logo.jpg"/>
+              <img src="/images/logo.jpg" />
             </div>
             <h3>后台管理系统</h3>
           </div>
@@ -24,7 +24,12 @@
               <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="submitForm(ruleFormRef)" style="width:320px">登录</el-button>
+              <el-button
+                type="primary"
+                @click="submitForm(ruleFormRef)"
+                style="width: 320px"
+                >登录</el-button
+              >
               <!-- <el-button @click="resetForm(ruleFormRef)">Reset</el-button> -->
             </el-form-item>
           </el-form>
@@ -36,19 +41,19 @@
 
 <script lang="ts">
 // import { userStore } from "@/store";
-import {useRouter} from 'vue-router'
+import { useRouter } from "vue-router";
 import { reactive, ref } from "vue";
 import type { FormInstance } from "element-plus";
 export default {
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     // const userStore = userStore();
     const ruleFormRef = ref<FormInstance>();
     //校验密码
     const validateUser = (rule: any, value: any, callback: any) => {
       if (value === "") {
         callback(new Error("请输入用户名！"));
-      }  else {
+      } else {
         callback();
       }
     };
@@ -56,11 +61,11 @@ export default {
     const validatePass = (rule: any, value: any, callback: any) => {
       if (value === "") {
         callback(new Error("请输入密码！"));
-      } 
+      }
       // else if (value !== ruleForm.pass) {
       //   callback(new Error("Two inputs don't match!"));
       // }
-       else {
+      else {
         callback();
       }
     };
@@ -82,8 +87,8 @@ export default {
       if (!formEl) return;
       formEl.validate((valid) => {
         if (valid) {
-          console.log("submit!");          
-          router.push({ path: '/home' })
+          console.log("submit!");
+          router.push({ path: "/home" });
         } else {
           console.log("error submit!");
           return false;
@@ -115,11 +120,11 @@ export default {
 .container {
   position: absolute;
   width: 100%;
-  height: 100%;    
+  height: 100%;
   display: flex;
   align-items: center;
   font-weight: 700;
-  background-image: url('/images/background.png');
+  background-image: url("/images/background.png");
   // background-image: url('../../../public/images/background.jpg');
   background-size: 100% 100%;
 
@@ -127,13 +132,13 @@ export default {
     position: relative;
     left: 10%;
     width: 30%;
-    .title{
+    .title {
       display: flex;
       justify-content: center;
       align-items: center;
-      .logo{
+      .logo {
         width: 20%;
-        img{
+        img {
           width: 40%;
         }
       }
