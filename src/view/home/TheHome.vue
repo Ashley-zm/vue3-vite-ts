@@ -44,6 +44,12 @@ const changeWidth = (isCollapse: Boolean) => {
     height: 100%;
     .el-header {
       border-bottom: 1px solid #dcdfe6;
+      // background-image: linear-gradient(
+      //   314deg,
+      //   rgba(88, 143, 239, 0.63) 0.42%,
+      //   #6dd5fa 44.12%,
+      //   #ffffff
+      // );
     }
     .el-aside {
       height: 100%;

@@ -52,8 +52,8 @@ const state = reactive({
     },
     {
       path: "/TheMonitoring",
-      name: "实时监测",
-      icon: "icondangan",
+      name: "表格数据",
+      icon: "iconanjian",
       children: [
         {
           path: "/TheMonitoring/TheData",
@@ -70,6 +70,14 @@ const state = reactive({
           },
         },
       ],
+    },
+    {
+      path: "/TheLoginer",
+      name: "登录人信息",
+      icon: "iconyonghuziliao",
+      onClick() {
+        router.push({ path: "/TheLog" });
+      },
     },
     {
       path: "/TheLog",
