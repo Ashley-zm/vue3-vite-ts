@@ -2,9 +2,9 @@
   "name": "vue3_cli_default",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --open",
     "build": "vite build",
-    "serve": "vite preview --host 0.0.0.0"
+    "serve": "vite preview"
   },
   "dependencies": {
     "axios": "^0.27.2",

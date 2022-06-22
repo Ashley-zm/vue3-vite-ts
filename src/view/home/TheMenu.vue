@@ -73,11 +73,45 @@ const state = reactive({
     },
     {
       path: "/TheLoginer",
-      name: "登录人信息",
+      name: "问卷调查",
+      icon: "iconwenjuan",
+      children: [
+        {
+          path: "/TheNewQuestions",
+          name: "问卷管理",
+          onClick() {
+            router.push({ path: "/TheNewQuestions" });
+          },
+        },
+        {
+          path: "/TheMonitoring/TheEchart",
+          name: "数据统计",
+          onClick() {
+            router.push({ path: "/TheEchart" });
+          },
+        },
+      ],
+    },
+    {
+      path: "/TheUser",
+      name: "用户管理",
       icon: "iconyonghuziliao",
-      onClick() {
-        router.push({ path: "/TheLog" });
-      },
+      children: [
+        {
+          path: "/TheUser",
+          name: "用户信息",
+          onClick() {
+            router.push({ path: "/TheUser" });
+          },
+        },
+        {
+          path: "/TheLoginer",
+          name: "登录人信息",
+          onClick() {
+            router.push({ path: "/TheLog" });
+          },
+        },
+      ],
     },
     {
       path: "/TheLog",
