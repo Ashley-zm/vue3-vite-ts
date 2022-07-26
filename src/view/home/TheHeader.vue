@@ -35,10 +35,11 @@
 <script setup lang="ts">
 import { ArrowDown } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
-// import { userStore } from "@/store";
+import { userStore } from "@/store";
 const router = useRouter();
-// const store = userStore();
+const store = userStore();
 const logout = () => {
+  store.REMOVE_INFO();
   router.push({ path: "/" });
 };
 </script>

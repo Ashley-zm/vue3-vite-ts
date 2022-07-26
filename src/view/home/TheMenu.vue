@@ -32,104 +32,37 @@
 </template>
 
 <script lang="ts" setup>
+// 菜单组件
 import SubMenu from "@/components/menu/SubMenu.vue";
-import { ref, reactive } from "vue";
+import { reactive, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+// 获取菜单接口
+import { getMenus } from "@/api/user";
+//pinia 数据
+import { userStore } from "@/store";
+// 用来解构赋值
+import { storeToRefs } from "pinia";
+
+const store = userStore();
+// 直接解构赋值后，数据不会进行响应式数据
+// const { user } = store; //此处的user是个死数据
+// const { user } = storeToRefs(store); //此处的user是响应式数据
+
 // 默认激活菜单
 const emit = defineEmits(["getChange"]);
+// 传递的菜单数据
+const props = defineProps({
+  menu: {
+    type: Array,
+    default: [],
+  },
+});
 const router = useRouter();
 const route = useRoute();
 const state = reactive({
   isCollapse: false,
-  menus: [
-    {
-      path: "/TheMap",
-      name: "一张图",
-      icon: "iconquyu",
-      onClick() {
-        router.push({ path: "/TheMap" });
-      },
-    },
-    {
-      path: "/TheMonitoring",
-      name: "表格数据",
-      icon: "iconanjian",
-      children: [
-        {
-          path: "/TheMonitoring/TheData",
-          name: "实时数据",
-          onClick() {
-            router.push({ path: "/TheData" });
-          },
-        },
-        {
-          path: "/TheMonitoring/TheEchart",
-          name: "数据曲线",
-          onClick() {
-            router.push({ path: "/TheEchart" });
-          },
-        },
-      ],
-    },
-    {
-      path: "/TheLoginer",
-      name: "问卷调查",
-      icon: "iconwenjuan",
-      children: [
-        {
-          path: "/TheNewQuestions",
-          name: "问卷管理",
-          onClick() {
-            router.push({ path: "/TheNewQuestions" });
-          },
-        },
-        {
-          path: "/TheMonitoring/TheEchart",
-          name: "数据统计",
-          onClick() {
-            router.push({ path: "/TheEchart" });
-          },
-        },
-      ],
-    },
-    {
-      path: "/TheUser",
-      name: "用户管理",
-      icon: "iconyonghuziliao",
-      children: [
-        {
-          path: "/TheUser",
-          name: "用户信息",
-          onClick() {
-            router.push({ path: "/TheUser" });
-          },
-        },
-        {
-          path: "/TheLoginer",
-          name: "登录人信息",
-          onClick() {
-            router.push({ path: "/TheLog" });
-          },
-        },
-      ],
-    },
-    {
-      path: "/TheLog",
-      name: "日志管理",
-      icon: "iconrizhi1",
-      onClick() {
-        router.push({ path: "/TheLog" });
-      },
-    },
-    {
-      path: "/TheSetting",
-      name: "系统设置",
-      icon: "iconjichupeizhi1",
-      onClick() {
-        router.push({ path: "/TheSetting" });
-      },
-    },
-  ],
+  menus: [] as any,
 });
 // 菜单开关
 const handleChange = () => {
@@ -138,8 +71,54 @@ const handleChange = () => {
 };
 // 菜单选择
 const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, route.path);
+  console.log(key, route.path, keyPath);
 };
+
+onMounted(() => {
+  getMenus({ roleId: store.user.roleId }).then((res) => {
+    if (res.data.flag) {
+      const arr = res.data.data;
+      const { parentId = "parentId", id = "id" } = {};
+      const lookUp: any = {};
+      const rootItems: any[] = [];
+      arr.forEach((item: { [x: string]: any }) => {
+        const idKey = item[id];
+        const parentIdKey = item[parentId];
+        if (!Object.prototype.hasOwnProperty.call(lookUp, idKey)) {
+          lookUp[idKey] = { children: [] };
+        }
+        lookUp[idKey] = {
+          ...item,
+          children: lookUp[idKey].children,
+          onClick() {
+            router.push({ path: item.menuUrl });
+          },
+        };
+        const node = lookUp[idKey];
+        if (!parentIdKey) {
+          rootItems.push(node);
+        } else {
+          if (!Object.prototype.hasOwnProperty.call(lookUp, parentIdKey)) {
+            lookUp[parentIdKey] = { children: [] };
+          }
+          lookUp[parentIdKey].children.push(node);
+        }
+      });
+      console.log("转变成tree", rootItems);
+      state.menus = rootItems;
+    } else {
+      // 给store赋值方法-$patch(传参/不传参)
+      // store.$patch((state) => {
+      //   state.token=''
+      //   state.user=''
+      // })
+      // 给store赋值方法-调用方法action
+      store.REMOVE_INFO();
+      router.push({ path: "/" });
+      ElMessage.error(res.data.msg);
+    }
+  });
+});
 </script>
 
 <style lang="less" scoped>

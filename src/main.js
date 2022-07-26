@@ -4,7 +4,7 @@ import router from './router'
 import pinia  from "./store";
 import { userStore } from "@/store";
 //改为element-plus默认UI
-import ElementPlus from 'element-plus'
+import ElementPlus from 'element-plus';
 import { ElMessage } from "element-plus";
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -29,16 +29,14 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 判断用户是否登录，通过获取store中是否存有token信息，若有则直接进入，若没有则跳转到登录页面。
 const store=userStore()
 router.beforeEach((to, from, next) => {
-  console.log("认证",store.token);
+  console.log("认证",store.token,store.roleId);
   //路由需要认证
   if (to.meta.requireAuth) {
     //判断pinia里是否有token
     if (store.token) {
       next()
     } else {
-      next({
-        path: '/',
-      })
+      // next({path: '/'})
       ElMessage.error("登录超时-请重新登录！");
     }
   } else {

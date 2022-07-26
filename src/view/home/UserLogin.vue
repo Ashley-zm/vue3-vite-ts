@@ -46,7 +46,7 @@ import type { FormInstance } from "element-plus";
 import { ElMessage } from "element-plus";
 // 用户登录接口
 import { userLogin } from "@/api/user";
-//pinia 数据
+//pinia 数据 用户数据
 import { userStore } from "@/store";
 export default {
   setup() {
@@ -86,7 +86,6 @@ export default {
     });
     // 数据提交
     const submitForm = (formEl: FormInstance | undefined) => {
-      console.log("cest");
       if (!formEl) return;
       formEl.validate((valid) => {
         if (valid) {
@@ -94,16 +93,18 @@ export default {
             userName: ruleForm.userName,
             password: ruleForm.password,
           }).then((res) => {
-            console.log("登录数据", res);
             if (res.data.flag) {
               let data = res.data.data[0];
               let token = res.data.token;
-              let user = data.loginName;
+              let user = data;
+              // let user = data.loginName;
               //存储token
               store.SET_TOKENN(token);
               //存储user
               store.SET_USER(user);
-              router.push({ path: "/home" });
+              router.push({
+                path: "/home",
+              });
             } else {
               ElMessage.error(res.data.msg);
             }

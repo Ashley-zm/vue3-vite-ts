@@ -5,9 +5,14 @@ export const columnList = [
       width: '80px'
     },
     {
+      prop: 'avatarUrl',
+      label: '头像',
+      width: '100px'
+    },
+    {
       prop: 'loginName',
       label: '登录名',
-      width: '180px'
+      width: '100px'
     },
     {
       prop: 'userName',
@@ -15,19 +20,24 @@ export const columnList = [
       width: '150px'
     },
     {
+      prop: 'roleName',
+      label: '角色',
+      width: '120px'
+    },
+    {
       prop: 'sex',
       label: '性别',
-      width: '150px'
+      width: '90px'
     },
     {
       prop: 'email',
       label: '邮箱',
-      width: '180px'
+      width: '170px'
     },
     {
       prop: 'address',
       label: '地址',
-      width: '150px'
+      minWidth: '150px'
     },
     {
       prop: 'Operations',
