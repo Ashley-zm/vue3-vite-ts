@@ -14,7 +14,7 @@
       </span>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-dropdown-item>以zm的身份登录</el-dropdown-item>
+          <!-- <el-dropdown-item>以{{ store.user }}的身份登录</el-dropdown-item> -->
           <el-divider style="margin: 0px" />
           <el-dropdown-item>个人中心</el-dropdown-item>
           <el-dropdown-item>修改资料</el-dropdown-item>
@@ -22,7 +22,7 @@
             <el-badge is-dot type="primary"> 设置 </el-badge>
           </el-dropdown-item>
           <el-divider style="margin: 0px" />
-          <el-dropdown-item>
+          <el-dropdown-item @click="logout">
             <svg-icon icon-class="icontuichu"></svg-icon>
             退出登录
           </el-dropdown-item>
@@ -34,6 +34,13 @@
 
 <script setup lang="ts">
 import { ArrowDown } from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
+// import { userStore } from "@/store";
+const router = useRouter();
+// const store = userStore();
+const logout = () => {
+  router.push({ path: "/" });
+};
 </script>
 
 <style lang="less" scoped>

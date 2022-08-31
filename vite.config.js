@@ -13,7 +13,13 @@ export default defineConfig({
   },
   server: { 
     hmr: true,  // 开启热更新              
-    host: '0.0.0.0'    //解决无法将网络暴露
+    host: '0.0.0.0',    //解决无法将网络暴露
+    proxy:{
+      '/vite':{
+        target:'http://localhost:5001/',
+        changeOrigin:true
+      }
+    }
   } ,
   // build
   build: {

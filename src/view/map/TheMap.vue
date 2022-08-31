@@ -66,12 +66,12 @@ const initMap = () => {
   state.map = new Map({
     // 设置地图图层
     layers: [
-      state.mapLayers.imageMap,
-      state.mapLayers.imageSource,
+      // state.mapLayers.imageMap,
+      // state.mapLayers.imageSource,
       state.mapLayers.gaodeMap,
-      state.mapLayers.gugeMap,
-      state.mapLayers.tianMap,
-      state.mapLayers.tianSource,
+      // state.mapLayers.gugeMap,
+      // state.mapLayers.tianMap,
+      // state.mapLayers.tianSource,
     ], //地图源的瓦片图层
     //视图动画
     // loadTilesWhileAnimating: true,

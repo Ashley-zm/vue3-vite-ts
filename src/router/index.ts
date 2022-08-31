@@ -4,6 +4,9 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import UserLogin from '@/view/home/UserLogin.vue'
 import TheHome from '@/view/home/TheHome.vue'
 import TheMap from '@/view/map/TheMap.vue'
+import TheNewQuestions from '@/view/questionnaire/TheNewQuestions.vue'
+import TheQuestions from '@/view/questionnaire/TheQuestions.vue'
+import TheUser from '@/view/user/TheUser.vue'
 
 // 定义路由
 const routes = [
@@ -21,6 +24,24 @@ const routes = [
         path: "/TheMap",
         name:'一张图',
         component:TheMap,
+        meta: {
+          requireAuth: true
+        }
+      },
+      {
+        path: "/TheQuestions",
+        name:'问卷管理',
+        component:TheQuestions,
+      },
+      {
+        path: "/TheNewQuestions",
+        name:'创建调查问卷',
+        component:TheNewQuestions,
+      },
+      {
+        path: "/TheUser",
+        name:'用户信息',
+        component:TheUser,
       },
     ]
   },
