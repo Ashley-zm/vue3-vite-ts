@@ -59,6 +59,9 @@
           <span v-else-if="column.prop === 'sex'">
             {{ scope.row[column.prop] === "0" ? "女" : "男" }}</span
           >
+          <span v-else-if="column.prop === 'avatarUrl'">
+            <el-avatar :src="`${serverUrl}${scope.row[column.prop]}`" />
+          </span>
           <span v-else>{{ scope.row[column.prop] }}</span>
         </template>
       </el-table-column>
@@ -81,8 +84,13 @@
     v-model="dialogFormVisible"
     :title="`用户信息 - ${isDetail ? '详情' : '编辑'}`"
   >
-    <el-form :model="form" style="display: flex; flex-flow: wrap">
-      <el-form-item label="登录名" :label-width="formLabelWidth">
+    <el-form
+      ref="ruleFormRef"
+      :rules="rules"
+      :model="form"
+      style="display: flex; flex-flow: wrap"
+    >
+      <el-form-item prop="loginName" label="登录名" :label-width="formLabelWidth">
         <el-input
           style="width: 170px"
           :disabled="isDetail"
@@ -90,7 +98,7 @@
           autocomplete="off"
         />
       </el-form-item>
-      <el-form-item label="用户名" :label-width="formLabelWidth">
+      <el-form-item prop="userName" label="用户名" :label-width="formLabelWidth">
         <el-input
           style="width: 170px"
           :disabled="isDetail"
@@ -98,13 +106,13 @@
           autocomplete="off"
         />
       </el-form-item>
-      <el-form-item label="性别" :label-width="formLabelWidth">
+      <el-form-item prop="sex" label="性别" :label-width="formLabelWidth">
         <el-select style="width: 170px" :disabled="isDetail" v-model="form.sex">
-          <el-option label="女" :value="0" />
-          <el-option label="男" :value="1" />
+          <el-option label="女" :value="'0'" />
+          <el-option label="男" :value="'1'" />
         </el-select>
       </el-form-item>
-      <el-form-item label="邮箱" :label-width="formLabelWidth">
+      <el-form-item prop="email" label="邮箱" :label-width="formLabelWidth">
         <el-input
           style="width: 170px"
           :disabled="isDetail"
@@ -138,17 +146,8 @@
         </el-select>
       </el-form-item>
       <el-form-item label="头像" :label-width="formLabelWidth">
-        <!-- <el-upload
-          action="http://localhost:5000/uploadImg" // 这里的路径填写后台开启的端口
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :before-upload="beforeAvatarUpload"
-          :on-remove="handleRemove"
-          :on-progress="sendIng"
-          :on-error="sendErr"
-          :on-success="handleAvatarSuccess"
-          > -->
         <el-upload
+          :disabled="isDetail"
           class="avatar-uploader"
           :action="`${serverUrl}/vite/user/uploadAvatar.do`"
           :show-file-list="false"
@@ -166,7 +165,7 @@
     <template #footer v-if="!isDetail">
       <span class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确定</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">确定</el-button>
       </span>
     </template>
   </el-dialog>
@@ -175,17 +174,15 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRaw } from "vue";
 import { columnList } from "./config.js";
-import {
-  getAllUsers,
-  getUserDetail,
-  getAllGroups,
-  getRoles,
-  getPicture,
-} from "@/api/user.js";
-import { ElMessage } from "element-plus";
+import { getAllUsers, getUserDetail, getAllGroups, getRoles } from "@/api/user.js";
+import { ElMessage, FormInstance, FormRules } from "element-plus";
 import { useRouter } from "vue-router";
 import { Plus } from "@element-plus/icons-vue";
-import type { UploadProps, UploadUserFile } from "element-plus";
+import type { UploadProps } from "element-plus";
+import { userStore } from "@/store";
+// import type { FormInstance, FormRules } from 'element-plus'
+const store = userStore();
+
 // 表单类型定义接口
 interface Form {
   groupID: number;
@@ -194,13 +191,31 @@ interface Form {
   loginName: string;
   userName: string;
   password: string;
-  sex: number;
+  sex: string;
   email: string;
   address: string;
   roleId: number;
   roleName: string;
   avatarUrl: string;
 }
+const ruleFormRef = ref<FormInstance>();
+
+const rules = reactive<FormRules>({
+  loginName: [
+    { required: true, message: "请输入登录名", trigger: "blur" },
+    { min: 2, max: 4, message: "长度必须在2～4之间", trigger: "blur" },
+  ],
+  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  sex: [{ required: true, message: "请选择性别", trigger: "change" }],
+  email: [
+    { type: "date", required: true, message: "请输入邮箱号", trigger: "blur" },
+    {
+      pattern: /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g,
+      message: "请输入正确的邮箱",
+      trigger: "blur",
+    },
+  ],
+});
 const router = useRouter();
 //查询条件
 const queryData = reactive({
@@ -223,18 +238,18 @@ const dialogFormVisible = ref(false);
 const isDetail = ref(true);
 // lable width
 const formLabelWidth = "80px";
-let form = reactive<Form>({
+let form = ref<Form>({
   groupID: 1,
-  groupsName: "临沂总公司",
+  groupsName: "",
   id: 1,
-  loginName: "zm",
-  userName: "朱梅",
-  password: "12345",
-  sex: 0,
-  email: "1540588534@qq.com",
-  address: "浙江省杭州市滨江区",
+  loginName: "",
+  userName: "",
+  password: "",
+  sex: "0",
+  email: "",
+  address: "",
   roleId: 1,
-  roleName: "测试管理员",
+  roleName: "",
   avatarUrl: "",
 });
 // 头像地址
@@ -251,7 +266,6 @@ const handleQuery = () => {
     pageSize: pageObj.pageSize,
   }).then((res) => {
     if (res.data.flag) {
-      // console.log("// 查询所有用户", res.data.data);
       tableData.value = res.data.data;
       pageObj.total = res.data.total;
     } else {
@@ -264,13 +278,11 @@ const handleQuery = () => {
 const handleSizeChange = (val: number) => {
   pageObj.pageSize = val;
   handleQuery();
-  console.log(`${val} items per page`);
 };
 // 修改当前分页时
 const handleCurrentChange = (val: number) => {
   pageObj.currentPage = val;
   handleQuery();
-  console.log(`current page: ${val}`);
 };
 // 查询所有组织
 const handleGroupsQuery = () => {
@@ -284,11 +296,9 @@ const handleGroupsQuery = () => {
   });
 };
 // 根据组织查询组织下的角色
-const handleRoleQuery = (groupId: Number) => {
+const handleRoleQuery = (groupId: number) => {
   getRoles({ groupId: groupId }).then((res) => {
     if (res.data.flag) {
-      console.log("组织查询组织下的角色", res.data.data);
-
       roleOptions.value = res.data.data;
     } else {
       router.push({ path: "/" });
@@ -298,7 +308,6 @@ const handleRoleQuery = (groupId: Number) => {
 };
 // 查看详情 编辑
 const handleClick = (row: any, isORnot: boolean) => {
-  console.log("gggg", serverUrl);
   handleGroupsQuery();
   isDetail.value = isORnot;
   dialogFormVisible.value = true;
@@ -311,10 +320,8 @@ const handleClick = (row: any, isORnot: boolean) => {
       } else {
         imageUrl.value = "";
       }
-      form = data;
-      console.log(form);
-
-      handleRoleQuery(form.groupID);
+      form.value = data;
+      handleRoleQuery(form.value.groupID);
     } else {
       router.push({ path: "/" });
       ElMessage.error(res.data.msg);
@@ -324,7 +331,10 @@ const handleClick = (row: any, isORnot: boolean) => {
 // 头像上传成功
 const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!);
-  console.log(URL.createObjectURL(uploadFile.raw!));
+  if (Number(response.data.id) === store.$state.user.id) {
+    store.SET_AVATARURL(response.data.path.replace("public", ""));
+  }
+  handleQuery();
 };
 //删除图片目前error
 const handleRemove: UploadProps["onRemove"] = (uploadFile, uploadFiles) => {
@@ -344,6 +354,18 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
     return false;
   }
   return true;
+};
+// 提交表单
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      console.log("submit!");
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
 };
 </script>
 <style lang="less" scoped>

@@ -6,7 +6,9 @@
       <span class="el-dropdown-link">
         <el-badge is-dot type="primary">
           <!-- <el-button>comments</el-button> -->
-          <el-avatar src="/images/avatar.png" />
+          <el-avatar :src="user.avatarUrl" />
+          <!-- <el-avatar :src="avatar.url" /> -->
+          <!-- <el-avatar src="/images/avatar.png" /> -->
         </el-badge>
         <el-icon class="el-icon--right">
           <arrow-down />
@@ -36,8 +38,18 @@
 import { ArrowDown } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { userStore } from "@/store";
+// 用来解构赋值
+import { storeToRefs } from "pinia";
+import { reactive } from "vue";
 const router = useRouter();
 const store = userStore();
+const { user } = storeToRefs(store); //此处的user是响应式数据
+// const serverUrl = import.meta.env.VITE_URL;
+// const avatar = reactive({
+//   url: ,
+// });
+// avatar.url = `${serverUrl}${user.value.avatarUrl}`;
+console.log("111", user.value.avatarUrl);
 const logout = () => {
   store.REMOVE_INFO();
   router.push({ path: "/" });

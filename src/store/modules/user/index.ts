@@ -21,8 +21,14 @@ export const userStore=defineStore({
         this.user = user
         sessionStorage.setItem("user", JSON.stringify(user))
     },
+    SET_AVATARURL(avatarUrl:string){
+      const serverUrl = import.meta.env.VITE_URL;
+      console.log("修改了1",avatarUrl);
+      console.log("修改了2",this.user.avatarUrl);
+      this.user.avatarUrl=serverUrl+avatarUrl
+      console.log("修改了2.1",this.user.avatarUrl);
+    },
     REMOVE_INFO(){
-    // REMOVE_INFO(state:any){
         // state.token = ''
         // state.user = {}
         this.token=''
