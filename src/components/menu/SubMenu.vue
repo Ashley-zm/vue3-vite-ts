@@ -1,24 +1,24 @@
 <template>
-  <el-sub-menu v-if="menu.children" :index="menu.path">
+  <el-sub-menu v-if="menu.children && menu.children.length > 0" :index="menu.menuUrl">
     <template #title>
       <el-icon>
         <svg-icon :icon-class="menu.icon"></svg-icon>
       </el-icon>
-      <span>{{ menu.name }}</span>
+      <span>{{ menu.menuName }}</span>
     </template>
     <el-menu-item
       v-for="(child, index) in menu.children"
       :key="index"
-      :index="child.path"
+      :index="child.menuUrl"
     >
-      <template #title> {{ child.name }}</template>
+      <template #title> {{ child.menuName }}</template>
     </el-menu-item>
   </el-sub-menu>
-  <el-menu-item v-else :index="menu.path">
+  <el-menu-item v-else :index="menu.menuUrl">
     <el-icon>
       <svg-icon :icon-class="menu.icon"></svg-icon>
     </el-icon>
-    <template #title> {{ menu.name }}</template>
+    <template #title> {{ menu.menuName }}</template>
   </el-menu-item>
 </template>
 

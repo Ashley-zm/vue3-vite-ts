@@ -7,6 +7,7 @@ import TheMap from '@/view/map/TheMap.vue'
 import TheNewQuestions from '@/view/questionnaire/TheNewQuestions.vue'
 import TheQuestions from '@/view/questionnaire/TheQuestions.vue'
 import TheUser from '@/view/user/TheUser.vue'
+import elementUI from '@/view/elementUI/UI.vue'
 
 // 定义路由
 const routes = [
@@ -42,6 +43,11 @@ const routes = [
         path: "/TheUser",
         name:'用户信息',
         component:TheUser,
+      },
+      {
+        path: "/TheUI",
+        name:'UI 组件',
+        component:elementUI,
       },
     ]
   },

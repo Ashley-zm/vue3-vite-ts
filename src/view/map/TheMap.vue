@@ -22,7 +22,7 @@ const state = reactive({
     gugeMap: {},
   },
 });
-const getBaseLayer = (layer: any) => {
+const getBaseLayer = (layer: TileLayer) => {
   return new TileLayer({
     source: new XYZ({
       url: `http://t2.tianditu.com/DataServer?T=${layer}&x={x}&y={y}&l={z}&tk=075fbb86f6f79ca1be0739988c6a8d9c`,
