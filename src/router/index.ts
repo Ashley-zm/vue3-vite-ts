@@ -19,7 +19,7 @@ const routes = [
    {
     path: "/home",
     component:TheHome,
-    redirect:'/TheMap',
+    redirect:'/TheUser',
     children:[
       {
         path: "/TheMap",
@@ -41,7 +41,7 @@ const routes = [
       },
       {
         path: "/TheUser",
-        name:'用户信息',
+        name:'用户管理',
         component:TheUser,
       },
       {

@@ -57,7 +57,7 @@
             >{{ scope.row[column.prop] }}</span
           >
           <span v-else-if="column.prop === 'sex'">
-            {{ scope.row[column.prop] === "0" ? "女" : "男" }}</span
+            {{ scope.row[column.prop] === 1 ? "女" : "男" }}</span
           >
           <span v-else-if="column.prop === 'avatarUrl'">
             <el-avatar :src="`${serverUrl}${scope.row[column.prop]}`" />
@@ -68,7 +68,7 @@
     </el-table>
     <el-pagination
       style="margin-top: 10px"
-      :currentPage="pageObj.currentPage"
+      :pageCurrent="pageObj.pageCurrent"
       :page-size="pageObj.pageSize"
       :page-sizes="[10, 20, 30, 40]"
       layout="total, sizes, prev, pager, next, jumper"
@@ -108,8 +108,8 @@
       </el-form-item>
       <el-form-item prop="sex" label="性别" :label-width="formLabelWidth">
         <el-select style="width: 170px" :disabled="isDetail" v-model="form.sex">
-          <el-option label="女" :value="'0'" />
-          <el-option label="男" :value="'1'" />
+          <el-option label="女" :value="1" />
+          <el-option label="男" :value="2" />
         </el-select>
       </el-form-item>
       <el-form-item prop="email" label="邮箱" :label-width="formLabelWidth">
@@ -120,7 +120,7 @@
           autocomplete="off"
         />
       </el-form-item>
-      <el-form-item label="组织" :label-width="formLabelWidth">
+      <!-- <el-form-item label="组织" :label-width="formLabelWidth">
         <el-select
           style="width: 170px"
           :disabled="isDetail"
@@ -134,14 +134,14 @@
             :value="item.id"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="角色" :label-width="formLabelWidth">
         <el-select style="width: 170px" :disabled="isDetail" v-model="form.roleId">
           <el-option
             v-for="(item, index) in roleOptions"
             :key="index"
-            :label="item.roleName"
-            :value="item.id"
+            :label="item.rName"
+            :value="item.rid"
           />
         </el-select>
       </el-form-item>
@@ -174,7 +174,7 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref, toRaw } from "vue";
 import { columnList } from "./config.js";
-import { getAllUsers, getUserDetail, getAllGroups, getRoles } from "@/api/user.js";
+import { getAllUsers, getUserDetail, getAllGroups, getRoles,getAllRoles } from "@/api/user.js";
 import { ElMessage, FormInstance, FormRules } from "element-plus";
 import { useRouter } from "vue-router";
 import { Plus } from "@element-plus/icons-vue";
@@ -184,19 +184,21 @@ import { userStore } from "@/store";
 const store = userStore();
 
 // 表单类型定义接口
+
 interface Form {
-  groupID: number;
-  groupsName: string;
+  // groupID: number;
+  // groupsName: string;
   id: number;
   loginName: string;
   userName: string;
   password: string;
-  sex: string;
+  sex: number;
   email: string;
   address: string;
   roleId: number;
   roleName: string;
-  avatarUrl: string;
+  [props: string]: any
+  // avatarUrl: string;
 }
 const ruleFormRef = ref<FormInstance>();
 
@@ -222,7 +224,7 @@ const queryData = reactive({
   filterWords: "",
 });
 const pageObj = reactive({
-  currentPage: 1,
+  pageCurrent: 1,
   pageSize: 10,
   total: 10,
 });
@@ -239,18 +241,18 @@ const isDetail = ref(true);
 // lable width
 const formLabelWidth = "80px";
 let form = ref<Form>({
-  groupID: 1,
-  groupsName: "",
+  // groupID: 1,
+  // groupsName: "",
   id: 1,
   loginName: "",
   userName: "",
   password: "",
-  sex: "0",
+  sex: 1,
   email: "",
   address: "",
   roleId: 1,
   roleName: "",
-  avatarUrl: "",
+  // avatarUrl: "",
 });
 // 头像地址
 const imageUrl = ref("");
@@ -261,15 +263,17 @@ onMounted(() => {
 // 查询所有用户
 const handleQuery = () => {
   getAllUsers({
-    queryData: queryData.filterWords,
-    currentPage: pageObj.currentPage,
+    keyWord: queryData.filterWords,
+    pageCurrent: pageObj.pageCurrent,
     pageSize: pageObj.pageSize,
   }).then((res) => {
     if (res.data.flag) {
-      tableData.value = res.data.data;
-      pageObj.total = res.data.total;
+      console.log(res);
+      
+      tableData.value = res.data.data.list;
+      pageObj.total = res.data.data.total;
     } else {
-      router.push({ path: "/" });
+      // router.push({ path: "/" });
       ElMessage.error(res.data.msg);
     }
   });
@@ -281,7 +285,7 @@ const handleSizeChange = (val: number) => {
 };
 // 修改当前分页时
 const handleCurrentChange = (val: number) => {
-  pageObj.currentPage = val;
+  pageObj.pageCurrent = val;
   handleQuery();
 };
 // 查询所有组织
@@ -306,27 +310,46 @@ const handleRoleQuery = (groupId: number) => {
     }
   });
 };
-// 查看详情 编辑
-const handleClick = (row: any, isORnot: boolean) => {
-  handleGroupsQuery();
-  isDetail.value = isORnot;
-  dialogFormVisible.value = true;
-  getUserDetail({ id: toRaw(row).id }).then((res) => {
+// 查询所有的角色
+const handleAllRoleQuery = () => {
+  getAllRoles().then((res) => {
     if (res.data.flag) {
-      let data = res.data.data[0];
-      if (data.avatarUrl) {
-        data.avatarUrl = data.avatarUrl.replace("public", "");
-        imageUrl.value = `${serverUrl}${data.avatarUrl}`;
-      } else {
-        imageUrl.value = "";
-      }
-      form.value = data;
-      handleRoleQuery(form.value.groupID);
+      roleOptions.value = res.data.data;
     } else {
       router.push({ path: "/" });
       ElMessage.error(res.data.msg);
     }
   });
+};
+handleAllRoleQuery()
+// 查看详情 编辑
+const handleClick = (row: Form, isORnot: boolean) => {
+  // handleGroupsQuery();
+  isDetail.value = isORnot;
+  dialogFormVisible.value = true;  
+  Object.keys(form.value).forEach((key) =>{ 
+    // @ts-ignore
+    form.value[key] =row[key] || form.value[key]
+  })
+  
+  console.log(form.value);
+  
+  // getUserDetail({ id: toRaw(row).id }).then((res) => {
+  //   if (res.data.flag) {
+  //     let data = res.data.data[0];
+  //     if (data.avatarUrl) {
+  //       data.avatarUrl = data.avatarUrl.replace("public", "");
+  //       imageUrl.value = `${serverUrl}${data.avatarUrl}`;
+  //     } else {
+  //       imageUrl.value = "";
+  //     }
+  //     form.value = data;
+  //     handleRoleQuery(form.value.groupID);
+  //   } else {
+  //     router.push({ path: "/" });
+  //     ElMessage.error(res.data.msg);
+  //   }
+  // });
 };
 // 头像上传成功
 const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {

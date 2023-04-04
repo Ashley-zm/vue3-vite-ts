@@ -1,9 +1,18 @@
 import service from '@/utils/request'
 
+// 验证token是否有效
+export function validateToken(data) {
+    return service({
+        url: '/auth/validateToken.do',
+        method: 'get',
+        data
+    })
+}
 // 用户登录
 export function userLogin(data) {
     return service({
-        url: '/user/userLogin.do',
+        url: '/auth/login.do',
+        // url: '/user/userLogin.do',
         method: 'post',
         data
     })
@@ -19,9 +28,18 @@ export function getMenus(data) {
 // 获取所有用户用户
 export function getAllUsers(data) {
     return service({
-        url: '/user/selectAllUsers.do',
+        url: '/user/findAllUser.do',
         method: 'post',
+        // url: '/user/selectAllUsers.do',
+        // method: 'post',
         data
+    })
+}
+// 获取所有角色
+export function getAllRoles() {
+    return service({
+        url: '/role/getAllRoles.do',
+        method: 'get'
     })
 }
 // 获取用户详情信息

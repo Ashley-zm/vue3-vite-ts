@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+console.log(__dirname);
 
 const path = require('path') 
 // https://vitejs.dev/config/
@@ -16,8 +17,12 @@ export default defineConfig({
     host: '0.0.0.0',    //解决无法将网络暴露
     proxy:{
       '/vite':{
-        target:'http://192.168.2.20:5001/',
-        changeOrigin:true
+        target:'http://10.131.21.183:3001/',
+        // target:'http://192.168.2.20:5001/',
+        changeOrigin:true, 
+        pathRewrite: {  
+          '^/vite': '/'   //测试nest 本身的接口地址没有 '/vite' 这种通用前缀，所以要rewrite，如果本身有则去掉  
+        }
       }
     }
   } ,

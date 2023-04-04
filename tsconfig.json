@@ -14,6 +14,7 @@
     "target": "es2016",//被编译的代码格式                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
     "jsx": "preserve",                                /* Specify what JSX code is generated. */
+    // "suppressImplicitAnyIndexErrors":true,/* 抑制任何隐式错误，建议使用注解 // @ts-ignore*/
     // "experimentalDecorators": true,                   /* Enable experimental support for TC39 stage 2 draft decorators. */
     // "emitDecoratorMetadata": true,                    /* Emit design-type metadata for decorated declarations in source files. */
     // "jsxFactory": "",                                 /* Specify the JSX factory function used when targeting React JSX emit, e.g. 'React.createElement' or 'h'. */
