@@ -58,16 +58,20 @@
 </template>
 
 <script lang="ts" setup>
+import Cookies from 'js-cookie'
 import GVerify from "@/common/verify.js";
 import { User, Lock, Key } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { onMounted, reactive, ref, Ref } from "vue";
+import { Encrypt } from '@/utils/crypto.js';
 import type { FormInstance } from "element-plus";
 import { ElMessage } from "element-plus";
 // 用户登录接口
 import { userLogin } from "@/api/user";
 //pinia 数据 用户数据
 import { userStore } from "@/store";
+
+
 const router = useRouter();
 // 实例化容器
 const store = userStore();
@@ -119,28 +123,30 @@ const rules = reactive({
   password: [{ validator: validatePass, trigger: "blur" }],
   userName: [{ validator: validateUser, trigger: "blur" }],
   verifyVal: [{ validator: validateVerify, trigger: "blur" }],
-});
+}); 
 // 数据提交
 const submitForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate((valid) => {
     if (valid) {
       userLogin({
-        userName: ruleForm.userName,
-        password: ruleForm.password,
+        loginName: ruleForm.userName,
+        password: Encrypt(ruleForm.password),
       })
         .then((res) => {
-          if (res.data.flag) {
-            let data = res.data.data[0];
-            let token = res.data.token;
-            let user = data;
-            const serverUrl = import.meta.env.VITE_URL;
-            user.avatarUrl = serverUrl + user.avatarUrl;
+          if (res.data.data.flag) {
+            let data = res.data.data;
+            let token = res.data.data.token;
+            // nest 测试 let token = res.data.token;
+            // let user = data;
+            // const serverUrl = import.meta.env.VITE_URL;
+            // user.avatarUrl = serverUrl + user.avatarUrl;
             // let user = data.loginName;
+            // console.log(data);
             //存储token
             store.SET_TOKENN(token);
             //存储user
-            store.SET_USER(user);
+            store.SET_USER(data.user.userInfo, data.user.roleMenuInfo.roleInfo,data.user.roleMenuInfo.resourceInfo);
             router.push({
               path: "/home",
             });

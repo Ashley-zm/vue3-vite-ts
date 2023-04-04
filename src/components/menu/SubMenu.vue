@@ -1,28 +1,32 @@
 <template>
-  <el-sub-menu v-if="menu.children && menu.children.length > 0" :index="menu.menuUrl">
+  <el-sub-menu
+    v-if="menu.children && menu.children.length > 0"
+    :index="menu.code"
+    v-show="hasPerm(menu.code)"
+  >
     <template #title>
       <el-icon>
         <svg-icon :icon-class="menu.icon"></svg-icon>
       </el-icon>
-      <span>{{ menu.menuName }}</span>
+      <span>{{ menu.MenuName }}</span>
     </template>
-    <el-menu-item
-      v-for="(child, index) in menu.children"
-      :key="index"
-      :index="child.menuUrl"
-    >
-      <template #title> {{ child.menuName }}</template>
-    </el-menu-item>
+    <template v-for="(child, index) in menu.children" :key="index">
+      <el-menu-item  :index="child.code" v-show="hasPerm(child.code)">
+        <template #title> {{ child.MenuName }}</template>
+      </el-menu-item>
+    </template>
   </el-sub-menu>
-  <el-menu-item v-else :index="menu.menuUrl">
+  <el-menu-item v-else :index="menu.code" v-show="hasPerm(menu.code)">
     <el-icon>
       <svg-icon :icon-class="menu.icon"></svg-icon>
     </el-icon>
-    <template #title> {{ menu.menuName }}</template>
+    <template #title> {{ menu.MenuName }}</template>
   </el-menu-item>
 </template>
 
 <script lang="ts" setup>
+import  {hasPerm}  from "@/common/tools.js";
+
 const props = defineProps({
   menu: {
     required: true,

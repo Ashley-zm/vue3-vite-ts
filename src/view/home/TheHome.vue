@@ -40,10 +40,14 @@ const changeWidth = (isCollapse: Boolean) => {
 .common-layout {
   width: 100%;
   height: 100%;
+
   .el-container {
     height: 100%;
+
     .el-header {
       border-bottom: 1px solid #dcdfe6;
+      box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+      transition: all 0.2s ease-in-out;
       // background-image: linear-gradient(
       //   314deg,
       //   rgba(88, 143, 239, 0.63) 0.42%,
@@ -51,11 +55,14 @@ const changeWidth = (isCollapse: Boolean) => {
       //   #ffffff
       // );
     }
+
     .el-aside {
       height: 100%;
     }
+
     .el-main {
       padding: 0;
+
       .title {
         padding: 10px;
         // padding: var(--el-main-padding);
@@ -65,5 +72,4 @@ const changeWidth = (isCollapse: Boolean) => {
       }
     }
   }
-}
-</style>
+}</style>
