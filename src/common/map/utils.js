@@ -108,7 +108,6 @@ function isTextMatched(name, searchText) {
   return regexp.test(name);
 }
 function addWmts(map, item) {
-  console.log('添加图层layer',item);
   const layer = new TileLayer({
     id: item.id,
     preload: Infinity,
